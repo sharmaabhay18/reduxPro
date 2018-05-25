@@ -1,40 +1,65 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableWithoutFeedback } from 'react-native';
+import { Text, View, TouchableOpacity, LayoutAnimation } from 'react-native';
 import { connect } from 'react-redux';
 import CardSection from './common/CardSection';
 import * as actions from '../actions';
 
 class ListItem extends Component {
 
-renderDescription() {
-   const { library, selectionLibraryId } = this.props;
 
-   if (library.id === selectionLibraryId) {
-     return (
-       <Text>{ library.description }</Text>
-     );
+  componentWillUpdate() {
+     LayoutAnimation.spring();
    }
+
+renderDescription() {
+   const { library, expanded } = this.props;
+   if (expanded) {
+     console.log(library);
+   }
+   // if (expanded) {
+   //   return (
+   //
+   //     <CardSection>
+   //     <Text style={{ flex: 1 }}>{ library.description }</Text>
+   //     </CardSection>
+   //
+   //   );
+   // }
 }
 
   render() {
+    const { titleStyle } = styles;
     const { title, id } = this.props.library;
+   console.log(id);
     return (
-        <TouchableWithoutFeedback onPress={() => this.props.selectLibrary(id)}>
+        <TouchableOpacity onPress={() => this.props.selectLibrary.bind(this, id)} >
         <View>
       <CardSection>
-      <Text>{title}</Text>
-      </CardSection>
+      <Text style={titleStyle}>{title}</Text>
 
-      {this.renderDescription()}
-      
+      </CardSection>
+{this.renderDescription()}
+
       </View>
-      </TouchableWithoutFeedback>
+      </TouchableOpacity>
       );
   }
 }
 
-const mapStateToProps = state => {
-  return { selectionLibraryId: state.selectionLibraryId };
+const styles = {
+  titleStyle: {
+    fontSize: 18,
+    paddingLeft: 15
+  },
+  descriptionStyle: {
+    paddingLeft: 10,
+    paddingRight: 10
+  }
+};
+
+const mapStateToProps = (state, ownProps) => {
+  const expanded = state.selectionLibraryId === ownProps.library.id;
+  return { expanded };
 };
 
 export default connect(mapStateToProps, actions)(ListItem);
