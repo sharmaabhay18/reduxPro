@@ -1,47 +1,52 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableOpacity, LayoutAnimation } from 'react-native';
+import { Text,
+  View,
+  TouchableWithoutFeedback,
+  UIManager,
+  LayoutAnimation,
+  Platform } from 'react-native';
 import { connect } from 'react-redux';
 import CardSection from './common/CardSection';
 import * as actions from '../actions';
 
 class ListItem extends Component {
 
-
-  componentWillUpdate() {
-     LayoutAnimation.spring();
+constructor() {
+  super();
+  if (Platform.OS === 'android') {
+       UIManager.setLayoutAnimationEnabledExperimental(true);
    }
+}
+componentWillUpdate() {
+  LayoutAnimation.spring();
+}
 
 renderDescription() {
    const { library, expanded } = this.props;
    if (expanded) {
-     console.log(library);
+     return (
+       <CardSection>
+       <Text style={{ flex: 1 }}>{ library.description }</Text>
+       </CardSection>
+   );
    }
-   // if (expanded) {
-   //   return (
-   //
-   //     <CardSection>
-   //     <Text style={{ flex: 1 }}>{ library.description }</Text>
-   //     </CardSection>
-   //
-   //   );
-   // }
 }
+
 
   render() {
     const { titleStyle } = styles;
     const { title, id } = this.props.library;
-   console.log(id);
+   // console.log(this.props.selectLibrary(id));
+   // console.log('actions', this.props);
     return (
-        <TouchableOpacity onPress={() => this.props.selectLibrary.bind(this, id)} >
+        <TouchableWithoutFeedback onPress={() => this.props.selectLibrary(id)} >
         <View>
       <CardSection>
       <Text style={titleStyle}>{title}</Text>
-
       </CardSection>
-{this.renderDescription()}
-
+        {this.renderDescription()}
       </View>
-      </TouchableOpacity>
+      </TouchableWithoutFeedback>
       );
   }
 }
@@ -50,10 +55,6 @@ const styles = {
   titleStyle: {
     fontSize: 18,
     paddingLeft: 15
-  },
-  descriptionStyle: {
-    paddingLeft: 10,
-    paddingRight: 10
   }
 };
 
